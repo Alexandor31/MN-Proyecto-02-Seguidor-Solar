@@ -1,1 +1,0 @@
-from .getSolarPosition import getSolarPosition
