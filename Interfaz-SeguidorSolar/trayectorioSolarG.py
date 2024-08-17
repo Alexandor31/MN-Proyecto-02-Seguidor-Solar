@@ -118,3 +118,148 @@ def graphTrayectoriaSolPolar2DVentana(times, azimuths, elevations, beta, phi):
 
     # Iniciar la interfaz gráfica de Tkinter
     root.mainloop()
+
+
+
+#----------- Grafico 3D -----------------#
+def graphTrayectoriaSol3D(frame_3d, times, azimuths, elevations, beta, phi):
+    # Convertir los tiempos a números (por simplicidad en la gráfica 3D)
+    time_numbers = np.arange(len(times))
+
+    # Crear la figura y el eje 3D
+    fig3 = plt.Figure(figsize=(4, 4), dpi=100)
+    ax3 = fig3.add_subplot(111, projection='3d')
+
+    # Configurar los ejes
+    ax3.set_xlabel('Time')
+    ax3.set_ylabel('Azimuth')
+    ax3.set_zlabel('Elevation')
+    ax3.set_title('Trayectoria del sol')
+
+    # Configurar límites fijos para evitar redimensionado
+    ax3.set_xlim(0, len(times)-1)
+    ax3.set_ylim(min(azimuths), max(azimuths))
+    ax3.set_zlim(min(elevations), max(elevations))
+
+    # Crear una función para generar la esfera que representa el sol
+    def create_sun(ax, center, radius=2.0, color='yellow'):
+        # Crear una esfera 3D
+        u = np.linspace(0, 2 * np.pi, 50)
+        v = np.linspace(0, np.pi, 50)
+        x = radius * np.outer(np.cos(u), np.sin(v)) + center[0]
+        y = radius * np.outer(np.sin(u), np.sin(v)) + center[1]
+        z = radius * np.outer(np.ones(np.size(u)), np.cos(v)) + center[2]
+
+        # Añadir la esfera al eje 3D con sombreado
+        ax.plot_surface(x, y, z, color=color, shade=True, rstride=1, cstride=1, linewidth=0)
+
+    # Función de inicialización para la animación 3D
+    def init_3d():
+        return []
+
+    # Función de actualización para la animación 3D
+    def update_3d(frame):
+        ax3.cla()  # Limpiar el eje antes de actualizar
+
+        # Re-dibujar la trayectoria hasta el punto actual
+        ax3.plot(time_numbers[:frame+1], azimuths[:frame+1], elevations[:frame+1], 'y-', markersize=0)
+
+        # Crear la esfera 3D para representar el sol en la posición actual
+        sun_position = [time_numbers[frame], azimuths[frame], elevations[frame]]
+        create_sun(ax3, sun_position, radius=2.0, color='yellow')
+
+        # Reestablecer límites para evitar redimensionado
+        ax3.set_xlim(0, len(times)-1)
+        ax3.set_ylim(min(azimuths), max(azimuths))
+        ax3.set_zlim(min(elevations), max(elevations))
+        ax3.set_xlabel('Time')
+        ax3.set_ylabel('Azimuth')
+        ax3.set_zlabel('Elevation')
+        ax3.set_title('Trayectoria del sol')
+
+        return []
+
+    # Crear el lienzo para la figura 3D
+    canvas3 = FigureCanvasTkAgg(fig3, master=frame_3d)
+    canvas3.draw()
+    canvas3.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+
+    interval_time_ms = 500
+    ani3 = animation.FuncAnimation(fig3, update_3d, frames=len(times), init_func=init_3d, interval=interval_time_ms, blit=True)
+
+
+def graphTrayectoriaSol3Ventana(times, azimuths, elevations, beta, phi):
+    # Convertir los tiempos a números (por simplicidad en la gráfica 3D)
+    time_numbers = np.arange(len(times))
+
+    # Configurar la ventana de Tkinter
+    root = tk.Tk()
+    root.title("Simulación de Ángulos Solares")
+
+    # Crear un marco para la gráfica 3D
+    frame_3d = tk.Frame(root)
+    frame_3d.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+
+    # Crear la figura y el eje 3D
+    fig3 = plt.Figure(figsize=(13, 7), dpi=100)
+    ax3 = fig3.add_subplot(111, projection='3d')
+
+    # Configurar los ejes
+    ax3.set_xlabel('Time')
+    ax3.set_ylabel('Azimuth')
+    ax3.set_zlabel('Elevation')
+    ax3.set_title('Trayectoria del sol')
+
+    # Configurar límites fijos para evitar redimensionado
+    ax3.set_xlim(0, len(times)-1)
+    ax3.set_ylim(min(azimuths), max(azimuths))
+    ax3.set_zlim(min(elevations), max(elevations))
+
+    # Crear una función para generar la esfera que representa el sol
+    def create_sun(ax, center, radius=2.0, color='yellow'):  # Aquí se ajusta el tamaño de la esfera
+        # Crear una esfera 3D
+        u = np.linspace(0, 2 * np.pi, 50)  # Aumentar la resolución para una mejor apariencia
+        v = np.linspace(0, np.pi, 50)
+        x = radius * np.outer(np.cos(u), np.sin(v)) + center[0]
+        y = radius * np.outer(np.sin(u), np.sin(v)) + center[1]
+        z = radius * np.outer(np.ones(np.size(u)), np.cos(v)) + center[2]
+
+        # Añadir la esfera al eje 3D con sombreado
+        ax.plot_surface(x, y, z, color=color, shade=True, rstride=1, cstride=1, linewidth=0)
+
+    # Función de inicialización para la animación 3D
+    def init_3d():
+        return []
+
+    # Función de actualización para la animación 3D
+    def update_3d(frame):
+        ax3.cla()  # Limpiar el eje antes de actualizar
+
+        # Re-dibujar la trayectoria hasta el punto actual, sin los puntos amarillos
+        ax3.plot(time_numbers[:frame+1], azimuths[:frame+1], elevations[:frame+1], 'y-', markersize=0)
+
+        # Crear la esfera 3D para representar el sol en la posición actual
+        sun_position = [time_numbers[frame], azimuths[frame], elevations[frame]]
+        create_sun(ax3, sun_position, radius=2.0, color='yellow')  # Ajusta el tamaño de la esfera aquí
+
+        # Reestablecer límites para evitar redimensionado
+        ax3.set_xlim(0, len(times)-1)
+        ax3.set_ylim(min(azimuths), max(azimuths))
+        ax3.set_zlim(min(elevations), max(elevations))
+        ax3.set_xlabel('Time')
+        ax3.set_ylabel('Azimuth')
+        ax3.set_zlabel('Elevation')
+        ax3.set_title('Trayectoria del sol')
+
+        return []
+
+    # Crear el lienzo para la figura 3D
+    canvas3 = FigureCanvasTkAgg(fig3, master=frame_3d)
+    canvas3.draw()
+    canvas3.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+
+    interval_time_ms = 500
+    ani3 = animation.FuncAnimation(fig3, update_3d, frames=len(times), init_func=init_3d, interval=interval_time_ms, blit=True)
+
+    # Iniciar la interfaz gráfica de Tkinter
+    root.mainloop()
