@@ -1,3 +1,2 @@
-from .getSolarPosition import getSolarPosition
-
 from .trayectoriaSolar import graphTrayectoriaSol3D, graphTrayectoriaSol2D, graphTrayectoriaSolPolar2D
+from .resolucionRotaciones import calculate_solar_positions
